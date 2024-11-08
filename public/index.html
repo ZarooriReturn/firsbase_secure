@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firestore Data Encryption Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 300px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    button {
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Firestore Encryption Example</h2>
+  <div id="auth-section">
+    <button id="guest-login">Guest Login</button>
+  </div>
+  <div id="data-section" style="display:none;">
+    <input type="text" id="data-input" placeholder="Enter data to save" />
+    <button id="save-data">Save Data</button>
+    <button id="get-data">Get Data</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    // Display data section after guest login
+    document.getElementById('guest-login').addEventListener('click', () => {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('data-section').style.display = 'block';
+    });
+
+    // Save data to backend (Vercel)
+    document.getElementById('save-data').addEventListener('click', async () => {
+      const dataToSave = document.getElementById('data-input').value;
+      try {
+        const response = await fetch('/api/saveData', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: dataToSave })
+        });
+        const result = await response.json();
+        alert(result.message || 'Data saved successfully!');
+        document.getElementById('data-input').value = ''; // Clear input
+      } catch (error) {
+        console.error('Error saving data:', error);
+      }
+    });
+
+    // Retrieve data from backend (Vercel)
+    document.getElementById('get-data').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/getData');
+        const result = await response.json();
+        let output = '';
+        result.data.forEach((item) => {
+          output += `Retrieved Data: ${item.data}<br>`;
+        });
+        document.getElementById('output').innerHTML = output || 'No data found.';
+      } catch (error) {
+        console.error('Error retrieving data:', error);
+      }
+    });
+  </script>
+</body>
+</html>
